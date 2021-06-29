@@ -1,10 +1,10 @@
 //
 //  main.cpp
 //  chip8
-//
 //  Created by daniel mills on 2020-01-23.
 //  Copyright © 2020 daniel mills. All rights reserved.
 //
+// CHIP-8 SPEC DOC: http://devernay.free.fr/hacks/chip8/C8TECH10.HTM
 
 #include <iostream>
 #include <string>
@@ -78,41 +78,50 @@ public:
             case 0x0000:
                 switch(opcode) {
                     case 0x00E0:
+                        //00E0 - CLS => Clear the display.
                         std::cout<<"Clear screen.\n";
                         break;
                     case 0x00EE:
+                        //00EE - RET => Return from a subroutine.
                         this->PC = this->stack[this->SP];
                         this->SP--;
                         break;
                 }
                 break;
             case 0x1000:
+                // 1nnn - JP addr => Jump to location nnn.
                 this->PC = nnn;
                 break;
             case 0x2000:
+                // 2nnn - CALL addr => Call subroutine at nnn.
                 this->SP++;
                 this->stack[this->SP] = this->PC;
                 this->PC = nnn;
                 break;
             case 0x3000:
+                //3xkk - SE Vx, byte => Skip next instruction if Vx = kk.
                 if(this->V[x] == kk) {
                     this->PC += 2;
                 }
                 break;
             case 0x4000:
+                // 4xkk - SNE Vx, byte => Skip next instruction if Vx != kk.
                 if(this->V[x] != kk) {
                     this->PC += 2;
                  }
                 break;
             case 0x5000:
+                // 5xy0 - SE Vx, Vy => Skip next instruction if Vx = Vy.
                 if(this->V[x] == this->V[y]) {
                     this->PC += 2;
                 }
                 break;
             case 0x6000:
+                // 6xkk - LD Vx, byte = >Set Vx = kk.
                 V[x] = kk;
                 break;
             case 0x7000:
+                //7xkk - ADD Vx, byte => Set Vx = Vx + kk.
                 this->V[x] = this->V[x] + kk;
                 break;     
             case 0x8000:
@@ -152,7 +161,10 @@ public:
                         break;
                     }
                     case 6:
+                        //8xy6 - SHR Vx {, Vy} => Set Vx = Vx SHR 1.
                         std::cout<< "0x8xy6 \n";
+                        // If the least-significant bit of Vx is 1, then VF is set to 1, otherwise 0. Then Vx is divided by 2.
+                        
                         break;
                     case 7:
                         std::cout<< "0x8xy7 \n";
@@ -203,7 +215,7 @@ private:
 
 int main(int argc, const char * argv[]) {
     Chip8 emulator;
-    emulator.loadFile("/Users/mills/projects/chip8/chip8/GUESS");
+    emulator.loadFile("/Users/vehikl/Code/chipate/chip8/GUESS");
     emulator.start();
     return 0;
 }
